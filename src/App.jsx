@@ -56,7 +56,7 @@ const App = () => {
         />
         <button type="submit">Search</button>
       </form>
-      {searchedStarships ? (
+      {searchedStarships.length > 0 ? (
         <div>
           <div className="starship-list">
             {searchedStarships.map((starship, index) => (
