@@ -5,6 +5,7 @@ const App = () => {
   const [starships, setStarships] = useState([]);
   const [search, setSearch] = useState('');
   const [userSearch, setUserSearch] = useState(null);
+  const [searchedStarships, setSearchedStarships] = useState([])
   const [page, setPage] = useState(1);
    
   
@@ -21,7 +22,10 @@ const App = () => {
     event.preventDefault();
     let response = await fetch(`https://swapi.dev/api/starships/?search=${search}`);
     let JSONdata = await response.json();
-    setUserSearch(JSONdata.results[0])
+    const newStarship = JSONdata.results[0];
+    setUserSearch(newStarship)
+    setSearchedStarships([...searchedStarships, newStarship]);
+    setSearch('')
   }
   const handleChange = (event) => {
     setSearch(event.target.value)
@@ -47,16 +51,23 @@ const App = () => {
         <input
           type="text"
           onChange={handleChange}
+          value={search}
           placeholder="Search for a starship..."
         />
         <button type="submit">Search</button>
       </form>
-      {userSearch ? (
-        <div className="starship-card">
-          <h2>{userSearch.name}</h2>
-          <p><span>Class: </span>{userSearch.starship_class}</p>
-          <p><span>Manufacturer: </span>{userSearch.manufacturer}</p>
-          <p><span>Model: </span>{userSearch.model}</p>
+      {searchedStarships ? (
+        <div>
+          <div className="starship-list">
+            {searchedStarships.map((starship, index) => (
+              <div key={index} className="starship-card">
+                <h2>{starship.name}</h2>
+                <p><span>Class: </span>{starship.starship_class}</p>
+                <p><span>Manufacturer: </span>{starship.manufacturer}</p>
+                <p><span>Model: </span>{starship.model}</p>
+              </div>
+            ))}
+          </div>
         </div>
       ) : starships.length > 0 ? (
         <div>
@@ -64,6 +75,7 @@ const App = () => {
             <button onClick={handlePrevious}>Previous</button>
             <button onClick={handleNext}>Next</button>
           </div>
+          <div><p>Showing: {starships.length}</p></div>
           <div className="starship-list">
             {starships.map((starship, index) => (
               <div key={index} className="starship-card">
